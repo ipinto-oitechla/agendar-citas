@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Question from "../components/Question";
 import { LoadingButton } from "@mui/lab";
 import { useForm } from "react-hook-form";
