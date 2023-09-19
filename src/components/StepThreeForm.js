@@ -59,7 +59,7 @@ const StepThreeForm = ({ handleOpen }) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid
         container
-        spacing={{ xs: 2, md: 3 }}
+        spacing={{ xs: 4, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
         <Grid item xs={4} sm={8} md={6}>
@@ -72,7 +72,6 @@ const StepThreeForm = ({ handleOpen }) => {
               <TextField
                 select
                 label="Seleccionar servicio*"
-                helperText="Por favor seleccione un servicio"
                 size="normal"
                 defaultValue=""
                 {...field}
@@ -124,7 +123,7 @@ const StepThreeForm = ({ handleOpen }) => {
             render={({ field }) => (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
-                  size="small"
+                  size="normal"
                   ampmInClock={false}
                   ampm={false}
                   format="hh:mm"
@@ -145,11 +144,11 @@ const StepThreeForm = ({ handleOpen }) => {
             rules={{ required: "Este campo es requerido." }}
             control={control}
             name="medico"
+            defaultValue=""
             render={({ field }) => (
               <TextField
                 select
                 label="Seleccionar médico*"
-                helperText="Por favor seleccione un m6dico"
                 size="normal"
                 defaultValue=""
                 {...field}
@@ -173,13 +172,13 @@ const StepThreeForm = ({ handleOpen }) => {
             rules={{ required: "Este campo es requerido." }}
             control={control}
             name="modalidad"
+            defaultValue="P"
             render={({ field }) => (
               <TextField
                 select
                 label="Seleccionar modalidad*"
-                helperText="Por favor seleccione la modalidad"
                 size="normal"
-                defaultValue="F"
+                defaultValue="P"
                 {...field}
               >
                 {modalities.map((option) => (
