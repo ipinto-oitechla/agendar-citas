@@ -66,7 +66,7 @@ export default function ScheduleAppointmentStepper() {
           </Box>
         </>
       ) : (
-        <>
+        <Box mt={4} mx={6}>
           {activeStep === 0 && (
             <StepOneForm
               setActiveStep={setActiveStep}
@@ -76,7 +76,7 @@ export default function ScheduleAppointmentStepper() {
           {activeStep === 1 && <StepTwoForm handleNext={handleNext} />}
           {activeStep === 2 && <StepThreeForm handleOpen={handleClickOpen} />}
           <AppointmentConfirmationAlert open={open} handleClose={handleClose} />
-        </>
+        </Box>
       )}
     </Box>
   );
