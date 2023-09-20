@@ -32,21 +32,24 @@ const StepThreeForm = ({ handleOpen }) => {
   } = useForm({
     defaultValues: {
       clinica: "1",
-      servicio: "",
+      servicio: "1",
+      especialidad: "1",
       fecha_cita: "",
       hora_cita: "",
-      medico: "",
-      modalidad: "",
+      medico: "1",
+      modalidad: "P",
       observaciones: "",
     },
   });
 
   const [servicesList, setServicesList] = useState([]);
+  const [specialtiesList, setSpecialtiesList] = useState([]);
   const [doctorsList, setDoctorsList] = useState([]);
 
   useEffect(() => {
-    setServicesList([]);
-    setDoctorsList([]);
+    setServicesList([{ value: 1, label: "Consulta médica"}]);
+    setSpecialtiesList([{ value: 1, label: "Pediatría"}]);
+    setDoctorsList([{ value: 1, label: "Doctor 1"}]);
   }, []);
 
   const onSubmit = (data) => {
@@ -67,13 +70,14 @@ const StepThreeForm = ({ handleOpen }) => {
             rules={{ required: "Este campo es requerido." }}
             control={control}
             name="servicio"
-            defaultValue=""
+            defaultValue="1"
             render={({ field }) => (
               <TextField
                 select
                 label="Seleccionar servicio*"
+                helperText="Por favor seleccione un servicio"
                 size="normal"
-                defaultValue=""
+                defaultValue="1"
                 {...field}
               >
                 {servicesList.map((option) => (
@@ -94,6 +98,35 @@ const StepThreeForm = ({ handleOpen }) => {
           <Controller
             rules={{ required: "Este campo es requerido." }}
             control={control}
+            name="especialidad"
+            defaultValue="1"
+            render={({ field }) => (
+              <TextField
+                select
+                label="Seleccionar especialidad*"
+                helperText="Por favor seleccione una especialidad"
+                size="normal"
+                defaultValue="1"
+                {...field}
+              >
+                {specialtiesList.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+          {errors?.especialidad?.message && (
+            <Typography variant="body2" color="red">
+              {errors.especialidad.message}
+            </Typography>
+          )}
+        </Grid>
+        <Grid item xs={4} sm={8} md={6}>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
             name="fecha_cita"
             defaultValue=""
             render={({ field }) => (
@@ -101,7 +134,7 @@ const StepThreeForm = ({ handleOpen }) => {
                 <DateField
                   label="Fecha de la cita*"
                   format="YYYY/MM/DD"
-                  disablePast
+                  disablePast={true}
                   size="small"
                   {...field}
                 />
@@ -144,13 +177,14 @@ const StepThreeForm = ({ handleOpen }) => {
             rules={{ required: "Este campo es requerido." }}
             control={control}
             name="medico"
-            defaultValue=""
+            defaultValue="1"
             render={({ field }) => (
               <TextField
                 select
                 label="Seleccionar médico*"
+                helperText="Por favor seleccione un médico"
                 size="normal"
-                defaultValue=""
+                defaultValue="1"
                 {...field}
               >
                 {doctorsList.map((option) => (
@@ -177,6 +211,7 @@ const StepThreeForm = ({ handleOpen }) => {
               <TextField
                 select
                 label="Seleccionar modalidad*"
+                helperText="Por favor seleccione la modalidad de la cita"
                 size="normal"
                 defaultValue="P"
                 {...field}
