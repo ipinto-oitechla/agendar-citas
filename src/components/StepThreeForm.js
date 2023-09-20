@@ -1,11 +1,17 @@
-import React, { useState } from "react";
-import { Box, Grid, MenuItem, TextField, TextareaAutosize } from "@mui/material";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import React, { useEffect, useState } from "react";
+import {
+  Grid,
+  MenuItem,
+  TextField,
+  TextareaAutosize,
+  Typography,
+} from "@mui/material";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { TimePicker } from "@mui/x-date-pickers";
+import { Controller, useForm } from "react-hook-form";
 
 const modalities = [
   {
@@ -19,172 +25,230 @@ const modalities = [
 ];
 const StepThreeForm = ({ handleOpen }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState({
-    clinic: null,
-    service: null,
-    date: "",
-    hour: "",
-    doctor: null,
-    modality: null,
-    observations: "",
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      clinica: "1",
+      servicio: "1",
+      especialidad: "1",
+      fecha_cita: "",
+      hora_cita: "",
+      medico: "1",
+      modalidad: "P",
+      observaciones: "",
+    },
   });
-  const [clinicsList, setClinicsList] = useState([]);
+
   const [servicesList, setServicesList] = useState([]);
+  const [specialtiesList, setSpecialtiesList] = useState([]);
   const [doctorsList, setDoctorsList] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Data", data);
+  useEffect(() => {
+    setServicesList([{ value: 1, label: "Consulta médica"}]);
+    setSpecialtiesList([{ value: 1, label: "Pediatría"}]);
+    setDoctorsList([{ value: 1, label: "Doctor 1"}]);
+  }, []);
+
+  const onSubmit = (data) => {
+    console.log(data);
+    setIsLoading(false);
     handleOpen();
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        mt: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Grid
         container
-        spacing={{ xs: 2, md: 3 }}
+        spacing={{ xs: 4, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
         <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            id="clinic"
-            select
-            required
-            label="Seleccionar clínica"
-            helperText="Por favor seleccione una clínica"
-            size="normal"
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="servicio"
+            defaultValue="1"
+            render={({ field }) => (
+              <TextField
+                select
+                label="Seleccionar servicio*"
+                helperText="Por favor seleccione un servicio"
+                size="normal"
+                defaultValue="1"
+                {...field}
+              >
+                {servicesList.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+          {errors?.servicio?.message && (
+            <Typography variant="body2" color="red">
+              {errors.servicio.message}
+            </Typography>
+          )}
+        </Grid>
+        <Grid item xs={4} sm={8} md={6}>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="especialidad"
+            defaultValue="1"
+            render={({ field }) => (
+              <TextField
+                select
+                label="Seleccionar especialidad*"
+                helperText="Por favor seleccione una especialidad"
+                size="normal"
+                defaultValue="1"
+                {...field}
+              >
+                {specialtiesList.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+          {errors?.especialidad?.message && (
+            <Typography variant="body2" color="red">
+              {errors.especialidad.message}
+            </Typography>
+          )}
+        </Grid>
+        <Grid item xs={4} sm={8} md={6}>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="fecha_cita"
             defaultValue=""
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                clinic: e.target.value,
-              }))
-            }
-          >
-            {clinicsList.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateField
+                  label="Fecha de la cita*"
+                  format="YYYY/MM/DD"
+                  disablePast={true}
+                  size="small"
+                  {...field}
+                />
+              </LocalizationProvider>
+            )}
+          />
+          {errors?.fecha_cita?.message && (
+            <Typography variant="body2" color="red">
+              {errors.fecha_cita.message}
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            id="service"
-            select
-            required
-            label="Seleccionar servicio"
-            helperText="Por favor seleccione un servicio"
-            size="normal"
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="hora_cita"
             defaultValue=""
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                service: e.target.value,
-              }))
-            }
-          >
-            {servicesList.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  size="normal"
+                  ampmInClock={false}
+                  ampm={false}
+                  format="hh:mm"
+                  label="Hora de la cita*"
+                  {...field}
+                />
+              </LocalizationProvider>
+            )}
+          />
+          {errors?.hora_cita?.message && (
+            <Typography variant="body2" color="red">
+              {errors.hora_cita.message}
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={4} sm={8} md={6}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer
-              components={["DateField"]}
-              sx={{ width: "50%", marginX: "auto" }}
-            >
-              <DateField
-                label="Fecha de la cita"
-                format="YYYY/MM/DD"
-                disablePast
-                size="small"
-                onChange={(e) =>
-                  setData((prevState) => ({
-                    ...prevState,
-                    date: e,
-                  }))
-                }
-              />
-            </DemoContainer>
-          </LocalizationProvider>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="medico"
+            defaultValue="1"
+            render={({ field }) => (
+              <TextField
+                select
+                label="Seleccionar médico*"
+                helperText="Por favor seleccione un médico"
+                size="normal"
+                defaultValue="1"
+                {...field}
+              >
+                {doctorsList.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+          {errors?.medico?.message && (
+            <Typography variant="body2" color="red">
+              {errors.medico.message}
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={4} sm={8} md={6}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer
-              components={["TimePicker"]}
-              sx={{ width: "50%", marginX: "auto" }}
-            >
-              <TimePicker
-                size="small"
-                ampmInClock={false}
-                ampm={false}
-                format="hh:mm"
-                label="Hora de la cita"
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </Grid>
-        <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            id="doctpr"
-            select
-            required
-            label="Seleccionar médico"
-            helperText="Por favor seleccione un médico"
-            size="normal"
-            defaultValue=""
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                doctor: e.target.value,
-              }))
-            }
-          >
-            {doctorsList.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            id="modality"
-            select
-            required
-            label="Seleccionar modalidad"
-            helperText="Por favor seleccione la modalidad de la cita"
-            size="normal"
-            defaultValue=""
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                modality: e.target.value,
-              }))
-            }
-          >
-            {modalities.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="modalidad"
+            defaultValue="P"
+            render={({ field }) => (
+              <TextField
+                select
+                label="Seleccionar modalidad*"
+                helperText="Por favor seleccione la modalidad de la cita"
+                size="normal"
+                defaultValue="P"
+                {...field}
+              >
+                {modalities.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+          {errors?.modalidad?.message && (
+            <Typography variant="body2" color="red">
+              {errors.modalidad.message}
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={4} sm={8} md={6} sx={{ resize: "none" }}>
-            <TextareaAutosize aria-label="Observaciones" placeholder="Observaciones" minRows={3} maxRows={10} />
+          <Controller
+            control={control}
+            name="observaciones"
+            render={({ field }) => (
+              <TextareaAutosize
+                aria-label="Observaciones"
+                placeholder="Observaciones"
+                minRows={3}
+                maxRows={10}
+                {...field}
+              />
+            )}
+          />
+          {errors?.observaciones?.message && (
+            <Typography variant="body2" color="red">
+              {errors.observaciones.message}
+            </Typography>
+          )}
         </Grid>
       </Grid>
       <LoadingButton
@@ -196,7 +260,7 @@ const StepThreeForm = ({ handleOpen }) => {
       >
         Agendar
       </LoadingButton>
-    </Box>
+    </form>
   );
 };
 

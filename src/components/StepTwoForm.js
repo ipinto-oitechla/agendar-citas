@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Box, Grid, MenuItem, TextField } from "@mui/material";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { Controller, useForm } from "react-hook-form";
+import { Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LoadingButton from "@mui/lab/LoadingButton";
+import MuiPhoneNumber from "mui-phone-number";
 
 const genders = [
   {
@@ -18,122 +19,176 @@ const genders = [
 ];
 const StepTwoForm = ({ handleNext }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState({
-    names: "",
-    surnames: "",
-    gender: null,
-    birthdate: null,
-    email: "",
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      nombres: "",
+      apellidos: "",
+      genero: "F",
+      fecha_nacimiento: "",
+      email: "",
+    },
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Data", data);
+  const onSubmit = (data) => {
+    console.log(data);
+    setIsLoading(false);
     handleNext();
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        mt: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Grid
         container
-        spacing={{ xs: 2, md: 3 }}
+        spacing={{ xs: 4, md: 6 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
         <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            margin="normal"
-            required
-            id="names"
-            name="names"
-            label="Nombres"
-            autoFocus
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                names: e.target.value,
-              }))
-            }
-          />
-        </Grid>
-        <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            margin="normal"
-            required
-            id="surnames"
-            name="surnames"
-            label="Apellidos"
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                surnames: e.target.value,
-              }))
-            }
-          />
-        </Grid>
-        <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            id="gender"
-            select
-            required
-            label="Seleccionar género"
-            helperText="Por favor seleccione su género"
-            size="normal"
-            defaultValue="F"
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                gender: e.target.value,
-              }))
-            }
-          >
-            {genders.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={4} sm={8} md={6}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DateField"]} sx={{ width: "50%", marginX: "auto" }}>
-              <DateField
-                label="Fecha de nacimiento"
-                format="YYYY/MM/DD"
-                disableFuture
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="nombres"
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                margin="normal"
+                label="Nombres*"
+                autoFocus
                 size="small"
-                onChange={(e) =>
-                  setData((prevState) => ({
-                    ...prevState,
-                    birthdate: e,
-                  }))
-                }
+                {...field}
               />
-            </DemoContainer>
-          </LocalizationProvider>
+            )}
+          />
+          {errors?.nombres?.message && (
+            <Typography variant="body2" color="red">
+              {errors.nombres.message}
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={4} sm={8} md={6}>
-          <TextField
-            margin="normal"
-            required
-            id="email"
-            name="email"
-            label="Correo electrónico"
-            onChange={(e) =>
-              setData((prevState) => ({
-                ...prevState,
-                email: e.target.value,
-              }))
-            }
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="apellidos"
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                margin="normal"
+                label="Apellidos*"
+                size="small"
+                {...field}
+              />
+            )}
           />
+          {errors?.apellidos?.message && (
+            <Typography variant="body2" color="red">
+              {errors.apellidos.message}
+            </Typography>
+          )}
+        </Grid>
+        <Grid item xs={4} sm={8} md={6}>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="telefono"
+            defaultValue=""
+            render={({ field }) => (
+              <MuiPhoneNumber
+                placeholder="Número de teléfono*"
+                onlyCountries={["sv"]}
+                defaultCountry="sv"
+                countryCodeEditable={false}
+                {...field}
+              />
+            )}
+          />
+          {errors?.telefono?.message && (
+            <Typography variant="body2" color="red">
+              {errors.telefono.message}
+            </Typography>
+          )}
+        </Grid>
+        <Grid item xs={4} sm={8} md={6}>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="genero"
+            render={({ field }) => (
+              <TextField
+                select
+                label="Seleccionar género*"
+                size="small"
+                defaultValue="F"
+                {...field}
+              >
+                {genders.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+          {errors?.genero?.message && (
+            <Typography variant="body2" color="red">
+              {errors.genero.message}
+            </Typography>
+          )}
+        </Grid>
+        <Grid item xs={4} sm={8} md={6}>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="fecha_nacimiento"
+            defaultValue=""
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateField
+                  label="Fecha de nacimiento*"
+                  format="YYYY/MM/DD"
+                  disableFuture
+                  size="small"
+                  {...field}
+                />
+              </LocalizationProvider>
+            )}
+          />
+          {errors?.fecha_nacimiento?.message && (
+            <Typography variant="body2" color="red">
+              {errors.fecha_nacimiento.message}
+            </Typography>
+          )}
+        </Grid>
+        <Grid item xs={4} sm={8} md={6}>
+          <Controller
+            rules={{
+              required: "Este campo es requerido.",
+              validate: {
+                matchPattern: (v) =>
+                  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+                  "El correo debe ser un correo válido",
+              },
+            }}
+            control={control}
+            name="email"
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                margin="normal"
+                label="Correo electrónico*"
+                size="small"
+                {...field}
+              />
+            )}
+          />
+          {errors?.email?.message && (
+            <Typography variant="body2" color="red">
+              {errors.email.message}
+            </Typography>
+          )}
         </Grid>
       </Grid>
       <LoadingButton
@@ -145,7 +200,7 @@ const StepTwoForm = ({ handleNext }) => {
       >
         Registrarme
       </LoadingButton>
-    </Box>
+    </form>
   );
 };
 

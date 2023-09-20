@@ -1,54 +1,79 @@
+import { Controller, useForm } from "react-hook-form";
 import React, { useState } from "react";
-import { Box, TextField } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 const StepOneForm = ({ setActiveStep, handleNext }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      poliza: "",
+      certificado: "",
+    },
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      policy: formData.get("policynumber"),
-      certificate: formData.get("certificate"),
-    };
-    setIsLoading(true);
-    if (data.policy === data.certificate) {
-      setActiveStep(2);
-    }else{
-        handleNext();
-    }
+  const onSubmit = (data) => {
+    console.log(data);
     setIsLoading(false);
+    if (data.poliza === data.certificado) {
+      setActiveStep(2);
+    } else {
+      handleNext();
+    }
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        mt: 1,
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
       }}
     >
-      <TextField
-        margin="normal"
-        required
-        id="policynumber"
-        label="Número de póliza"
-        name="policynumber"
-        autoFocus
-        size="small"
+      <Controller
+        rules={{ required: "Este campo es requerido." }}
+        control={control}
+        name="poliza"
+        defaultValue=""
+        render={({ field }) => (
+          <TextField
+            margin="normal"
+            label="Número de póliza*"
+            autoFocus
+            size="small"
+            {...field}
+          />
+        )}
       />
-      <TextField
-        margin="normal"
-        required
-        name="certificate"
-        label="Certificado"
-        id="certificate"
-        size="small"
+      {errors?.poliza?.message && (
+        <Typography variant="body2" color="red">
+          {errors.poliza.message}
+        </Typography>
+      )}
+      <Controller
+        rules={{ required: "Este campo es requerido." }}
+        control={control}
+        name="certificado"
+        defaultValue=""
+        render={({ field }) => (
+          <TextField
+            margin="normal"
+            label="Certificado*"
+            size="small"
+            {...field}
+          />
+        )}
       />
+      {errors?.certificado?.message && (
+        <Typography variant="body2" color="red">
+          {errors.certificado.message}
+        </Typography>
+      )}
       <LoadingButton
         loading={isLoading}
         type="submit"
@@ -58,7 +83,7 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
       >
         Verificar
       </LoadingButton>
-    </Box>
+    </form>
   );
 };
 
