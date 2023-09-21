@@ -2,8 +2,11 @@ import { Controller, useForm } from "react-hook-form";
 import React, { useState } from "react";
 import { TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { useAuth } from "../contexts/AppointmentProvider";
+import axios from "axios";
 
 const StepOneForm = ({ setActiveStep, handleNext }) => {
+  const { storeInfo } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const {
     control,
@@ -17,12 +20,35 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-    setIsLoading(false);
-    if (data.poliza === data.certificado) {
-      setActiveStep(2);
-    } else {
-      handleNext();
+    setIsLoading(true);
+    try {
+      //TODO: SEND TOKEN IN HEAER
+      axios
+        .get(
+          `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}`
+        )
+        .then((res) => {
+          setIsLoading(false);
+          const patient = {
+            poliza: data.poliza,
+            certificado: data.certificado,
+          };
+          if (res.status === 200) {
+            const patientWithInfo = {
+              patient,
+              ...res.data,
+            };
+            storeInfo({ patientWithInfo });
+            setActiveStep(2);
+          }
+          if (res.status === 404) {
+            storeInfo({ patient });
+            handleNext();
+          }
+        })
+        .catch((error) => console.error(error));
+    } catch (error) {
+      throw console.error(error);
     }
   };
 
