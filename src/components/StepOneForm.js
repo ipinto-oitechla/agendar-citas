@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AppointmentProvider";
 import axios from "axios";
 
 const StepOneForm = ({ setActiveStep, handleNext }) => {
-  const { storeInfo } = useAuth();
+  const { info, storeInfo } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const {
     control,
@@ -21,35 +21,36 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
 
   const onSubmit = (data) => {
     setIsLoading(true);
-    try {
-      //TODO: SEND TOKEN IN HEAER
-      axios
-        .get(
-          `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}`
-        )
-        .then((res) => {
-          setIsLoading(false);
-          const patient = {
-            poliza: data.poliza,
-            certificado: data.certificado,
+    //TODO: SEND TOKEN IN HEAER
+    const patient = {
+      poliza: data.poliza,
+      certificado: data.certificado,
+    };
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}`,
+        {
+          headers: { Authorization: `Token ${info.token}` },
+        }
+      )
+      .then((res) => {
+        setIsLoading(false);
+        if (res.status === 200) {
+          const patientWithInfo = {
+            patient,
+            ...res.data,
           };
-          if (res.status === 200) {
-            const patientWithInfo = {
-              patient,
-              ...res.data,
-            };
-            storeInfo({ patientWithInfo });
-            setActiveStep(2);
-          }
-          if (res.status === 404) {
-            storeInfo({ patient });
-            handleNext();
-          }
-        })
-        .catch((error) => console.error(error));
-    } catch (error) {
-      throw console.error(error);
-    }
+          storeInfo({ patientWithInfo });
+          setActiveStep(2);
+        }
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        if (error?.response?.status === 404) {
+          storeInfo({ patient });
+          handleNext();
+        }
+      });
   };
 
   return (

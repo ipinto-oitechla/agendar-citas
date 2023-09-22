@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useMemo, useEffect } from "react";
+import { createContext, useState, useContext, useMemo } from "react";
 
 const AppointmentContext = createContext();
 
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 export const AppointmentProvider = ({ children }) => {
-  const [info, setInfo] = useState();
+  const [info, setInfo] = useState(initialState);
 
   const storeInfo = (logInfo) => {
     setInfo((prevState) => ({
