@@ -2,22 +2,28 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers/DateField";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LoadingButton from "@mui/lab/LoadingButton";
 import MuiPhoneNumber from "mui-phone-number";
+import { useAuth } from "../contexts/AppointmentProvider";
+import axios from "axios";
+import moment from "moment";
 
 const genders = [
   {
-    value: "F",
+    value: "0",
     label: "Femenino",
   },
   {
-    value: "M",
+    value: "1",
     label: "Masculino",
   },
 ];
 const StepTwoForm = ({ handleNext }) => {
+  const { info } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const {
     control,
@@ -27,16 +33,40 @@ const StepTwoForm = ({ handleNext }) => {
     defaultValues: {
       nombres: "",
       apellidos: "",
-      genero: "F",
+      prefijo: "0",
       fecha_nacimiento: "",
       email: "",
     },
   });
 
   const onSubmit = (data) => {
-    console.log(data);
     setIsLoading(false);
-    handleNext();
+    // handleNext();
+    try {
+      //TODO: SEND TOKEN IN HEAER
+      const patient = {
+        ...data,
+        fecha_nacimiento: moment(data.fecha_nacimiento).format('YYYY/MM/DD'),
+        telefono: data.telefono.split(" ")[1],
+        poliza: info.patient.poliza,
+        certificado: info.patient.certificado,
+        direccion: "-",
+      };
+      axios
+        .post(`${process.env.REACT_APP_API_URL}add_paciente/`, patient, {
+          headers: { Authorization: `Token ${info.token}` }
+        })
+        .then((res) => {
+          setIsLoading(false);
+          console.log("RES ".res.data);
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          console.error(error);
+        });
+    } catch (error) {
+      throw console.error(error);
+    }
   };
 
   return (
@@ -115,13 +145,13 @@ const StepTwoForm = ({ handleNext }) => {
           <Controller
             rules={{ required: "Este campo es requerido." }}
             control={control}
-            name="genero"
+            name="prefijo"
             render={({ field }) => (
               <TextField
                 select
                 label="Seleccionar género*"
                 size="small"
-                defaultValue="F"
+                defaultValue=""
                 {...field}
               >
                 {genders.map((option) => (
@@ -146,10 +176,12 @@ const StepTwoForm = ({ handleNext }) => {
             defaultValue=""
             render={({ field }) => (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateField
+                <DatePicker
                   label="Fecha de nacimiento*"
                   format="YYYY/MM/DD"
+                  inputFormat="DD/MM/YYYY"
                   disableFuture
+                  views={["year", "month", "day"]}
                   size="small"
                   {...field}
                 />

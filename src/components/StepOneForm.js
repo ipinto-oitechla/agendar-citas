@@ -23,16 +23,16 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
     setIsLoading(true);
     try {
       //TODO: SEND TOKEN IN HEAER
+      const patient = {
+        poliza: data.poliza,
+        certificado: data.certificado,
+      };
       axios
         .get(
           `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}`
         )
         .then((res) => {
           setIsLoading(false);
-          const patient = {
-            poliza: data.poliza,
-            certificado: data.certificado,
-          };
           if (res.status === 200) {
             const patientWithInfo = {
               patient,
@@ -41,12 +41,14 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
             storeInfo({ patientWithInfo });
             setActiveStep(2);
           }
-          if (res.status === 404) {
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          if (error.response.status === 404) {
             storeInfo({ patient });
             handleNext();
           }
-        })
-        .catch((error) => console.error(error));
+        });
     } catch (error) {
       throw console.error(error);
     }
