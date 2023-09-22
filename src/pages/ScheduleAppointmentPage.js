@@ -12,13 +12,12 @@ const ScheduleAppointmentPage = () => {
         username: process.env.REACT_APP_EMAIL,
         password: process.env.REACT_APP_PASSWORD,
       };
-
       axios
         .post(`${process.env.REACT_APP_API_URL}api-token-auth/`, data)
         .then((res) => {
           if (res.status === 200) {
             const token = res.data.token;
-            storeInfo({token});
+            storeInfo({ token });
           }
         })
         .catch((error) => console.error(error));
