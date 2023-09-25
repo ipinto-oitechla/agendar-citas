@@ -13,7 +13,7 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
     defaultValues: {
       poliza: "",
       certificado: "",
-      id: "",
+      ramo: "",
     },
   });
 
@@ -42,11 +42,11 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
       const patient = {
         poliza: data.poliza,
         certificado: data.certificado,
-        id: data.id,
+        ramo: data.ramo,
       };
       axios
         .get(
-          `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}&ramo=${data.id}`,
+          `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}&ramo=${data.ramo}`,
           {
             headers: { Authorization: `Token ${info.token}` },
           }
@@ -120,7 +120,7 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
           <Controller
             rules={{ required: "Este campo es requerido." }}
             control={control}
-            name="id"
+            name="ramo"
             render={({ field, fieldState: { error } }) => (
               <TextField
                 select
