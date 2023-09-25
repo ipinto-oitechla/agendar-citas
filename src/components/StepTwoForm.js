@@ -39,32 +39,37 @@ const StepTwoForm = ({ handleNext }) => {
   });
 
   const onSubmit = (data) => {
-    setIsLoading(true);
-    const patient = {
-      ...data,
-      fecha_nacimiento: `${data.fecha_nacimiento.$y}-${
-        data.fecha_nacimiento.$M + 1
-      }-${data.fecha_nacimiento.$D}`,
-      telefono: data.telefono.split(" ")[1],
-      poliza: info.patient.poliza,
-      certificado: info.patient.certificado,
-      direccion: "-",
-      medico: 1,
-    };
-    axios
-      .post(`${process.env.REACT_APP_API_URL}add_paciente`, patient, {
-        headers: { Authorization: `Bearer ${info.token}` },
-      })
-      .then((res) => {
-        setIsLoading(false);
-        if (res.status === 201) {
-          handleNext();
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.error(error);
-      });
+    try {
+      setIsLoading(true);
+      const patient = {
+        ...data,
+        fecha_nacimiento: `${data.fecha_nacimiento.$y}-${
+          data.fecha_nacimiento.$M + 1
+        }-${data.fecha_nacimiento.$D}`,
+        telefono: data.telefono.split(" ")[1],
+        poliza: info.patient.poliza,
+        certificado: info.patient.certificado,
+        ramo: info.patient.ramo,
+        direccion: "-",
+        medico: 1,
+      };
+      axios
+        .post(`${process.env.REACT_APP_API_URL}add_paciente`, patient, {
+          headers: { Authorization: `Bearer ${info.token}` },
+        })
+        .then((res) => {
+          setIsLoading(false);
+          if (res.status === 201) {
+            handleNext();
+          }
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          console.error(error);
+        });
+    } catch (error) {
+      throw console.error(error);
+    }
   };
 
   return (
