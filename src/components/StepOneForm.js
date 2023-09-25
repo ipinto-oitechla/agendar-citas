@@ -32,43 +32,46 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
           console.log(error);
         });
     } catch (error) {
-      console.error(error);
+      throw console.error(error);
     }
   }, []);
 
   const onSubmit = (data) => {
-    setIsLoading(true);
-    //TODO: SEND TOKEN IN HEAER
-    const patient = {
-      poliza: data.poliza,
-      certificado: data.certificado,
-      id: data.id,
-    };
-    axios
-      .get(
-        `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}&ramo=${data.id}`,
-        {
-          headers: { Authorization: `Token ${info.token}` },
-        }
-      )
-      .then((res) => {
-        setIsLoading(false);
-        if (res.status === 200) {
-          const patientWithInfo = {
-            patient,
-            ...res.data,
-          };
-          storeInfo({ patientWithInfo });
-          setActiveStep(2);
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        if (error?.response?.status === 404) {
-          storeInfo({ patient });
-          handleNext();
-        }
-      });
+    try {
+      setIsLoading(true);
+      const patient = {
+        poliza: data.poliza,
+        certificado: data.certificado,
+        id: data.id,
+      };
+      axios
+        .get(
+          `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}&ramo=${data.id}`,
+          {
+            headers: { Authorization: `Token ${info.token}` },
+          }
+        )
+        .then((res) => {
+          setIsLoading(false);
+          if (res.status === 200) {
+            const patientWithInfo = {
+              patient,
+              ...res.data,
+            };
+            storeInfo({ patientWithInfo });
+            setActiveStep(2);
+          }
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          if (error?.response?.status === 404) {
+            storeInfo({ patient });
+            handleNext();
+          }
+        });
+    } catch (error) {
+      throw console.error(error);
+    }
   };
 
   return (
@@ -128,7 +131,10 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
                 {...field}
               >
                 {branches.map((option) => (
-                  <MenuItem key={`${option.id} ${option.codigo}`} value={option.id}>
+                  <MenuItem
+                    key={`${option.id} ${option.codigo}`}
+                    value={option.id}
+                  >
                     {`${option.codigo} ${option.nombre}`}
                   </MenuItem>
                 ))}

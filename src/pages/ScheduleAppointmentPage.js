@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import ScheduleAppointmentStepper from "../components/ScheduleAppointmentStepper";
 import axios from "axios";
 import { useAuth } from "../contexts/AppointmentProvider";
 
 const ScheduleAppointmentPage = () => {
-  const { storeInfo } = useAuth();
+  const { info, storeInfo } = useAuth();
+
   useEffect(() => {
     try {
       let data = {
@@ -28,7 +29,13 @@ const ScheduleAppointmentPage = () => {
 
   return (
     <Box textAlign="center" mt={2}>
-      <ScheduleAppointmentStepper />
+      {info.token === "" ? (
+        <Box>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <ScheduleAppointmentStepper />
+      )}
     </Box>
   );
 };
