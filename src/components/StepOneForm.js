@@ -127,7 +127,7 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
                 label="Ramo *"
                 error={!!error}
                 helperText={error?.message}
-                sx={{ width: "20%" }}
+                sx={{ minWidth: "20%" }}
                 {...field}
               >
                 {branches.map((option) => (
