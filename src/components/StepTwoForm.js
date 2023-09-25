@@ -17,11 +17,11 @@ import axios from "axios";
 
 const genders = [
   {
-    value: "0",
+    value: 0,
     label: "Femenino",
   },
   {
-    value: "1",
+    value: 1,
     label: "Masculino",
   },
 ];
@@ -32,39 +32,44 @@ const StepTwoForm = ({ handleNext }) => {
     defaultValues: {
       nombres: "",
       apellidos: "",
-      prefijo: "0",
+      prefijo: "",
       fecha_nacimiento: "",
       email: "",
     },
   });
 
   const onSubmit = (data) => {
-    setIsLoading(true);
-    const patient = {
-      ...data,
-      fecha_nacimiento: `${data.fecha_nacimiento.$y}-${
-        data.fecha_nacimiento.$M + 1
-      }-${data.fecha_nacimiento.$D}`,
-      telefono: data.telefono.split(" ")[1],
-      poliza: info.patient.poliza,
-      certificado: info.patient.certificado,
-      direccion: "-",
-      medico: 1,
-    };
-    axios
-      .post(`${process.env.REACT_APP_API_URL}add_paciente`, patient, {
-        headers: { Authorization: `Bearer ${info.token}` },
-      })
-      .then((res) => {
-        setIsLoading(false);
-        if (res.status === 201) {
-          handleNext();
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.error(error);
-      });
+    try {
+      setIsLoading(true);
+      const patient = {
+        ...data,
+        fecha_nacimiento: `${data.fecha_nacimiento.$y}-${
+          data.fecha_nacimiento.$M + 1
+        }-${data.fecha_nacimiento.$D}`,
+        telefono: data.telefono.split(" ")[1],
+        poliza: info.patient.poliza,
+        certificado: info.patient.certificado,
+        ramo: info.patient.ramo,
+        direccion: "-",
+        medico: 1,
+      };
+      axios
+        .post(`${process.env.REACT_APP_API_URL}add_paciente`, patient, {
+          headers: { Authorization: `Bearer ${info.token}` },
+        })
+        .then((res) => {
+          setIsLoading(false);
+          if (res.status === 201) {
+            handleNext();
+          }
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          console.error(error);
+        });
+    } catch (error) {
+      throw console.error(error);
+    }
   };
 
   return (
@@ -140,6 +145,7 @@ const StepTwoForm = ({ handleNext }) => {
                 size="small"
                 error={!!error}
                 helperText={error?.message}
+                sx={{ minWidth: "30%" }}
                 {...field}
               >
                 {genders.map((option) => (
