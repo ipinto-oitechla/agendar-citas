@@ -17,11 +17,11 @@ import axios from "axios";
 
 const genders = [
   {
-    value: "0",
+    value: 0,
     label: "Femenino",
   },
   {
-    value: "1",
+    value: 1,
     label: "Masculino",
   },
 ];
@@ -32,7 +32,7 @@ const StepTwoForm = ({ handleNext }) => {
     defaultValues: {
       nombres: "",
       apellidos: "",
-      prefijo: "0",
+      prefijo: "",
       fecha_nacimiento: "",
       email: "",
     },
@@ -145,6 +145,7 @@ const StepTwoForm = ({ handleNext }) => {
                 size="small"
                 error={!!error}
                 helperText={error?.message}
+                sx={{ minWidth: "30%" }}
                 {...field}
               >
                 {genders.map((option) => (
