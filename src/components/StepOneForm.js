@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
-import React, { useState } from "react";
-import { TextField, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, MenuItem, Stack, TextField } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useAuth } from "../contexts/AppointmentProvider";
 import axios from "axios";
@@ -8,108 +8,151 @@ import axios from "axios";
 const StepOneForm = ({ setActiveStep, handleNext }) => {
   const { info, storeInfo } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-  } = useForm({
+  const [branches, setBranches] = useState([{ value: 0, label: "0" }]);
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       poliza: "",
       certificado: "",
+      id: "",
     },
   });
 
-  const onSubmit = (data) => {
-    setIsLoading(true);
-    //TODO: SEND TOKEN IN HEAER
-    const patient = {
-      poliza: data.poliza,
-      certificado: data.certificado,
-    };
-    axios
-      .get(
-        `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}`,
-        {
+  useEffect(() => {
+    try {
+      axios
+        .get(`${process.env.REACT_APP_API_URL}buscar_ramo/`, {
           headers: { Authorization: `Token ${info.token}` },
-        }
-      )
-      .then((res) => {
-        setIsLoading(false);
-        if (res.status === 200) {
-          const patientWithInfo = {
-            patient,
-            ...res.data,
-          };
-          storeInfo({ patientWithInfo });
-          setActiveStep(2);
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        if (error?.response?.status === 404) {
-          storeInfo({ patient });
-          handleNext();
-        }
-      });
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setBranches(res.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      throw console.error(error);
+    }
+  }, []);
+
+  const onSubmit = (data) => {
+    try {
+      setIsLoading(true);
+      const patient = {
+        poliza: data.poliza,
+        certificado: data.certificado,
+        id: data.id,
+      };
+      axios
+        .get(
+          `${process.env.REACT_APP_API_URL}buscar_paciente/?poliza=${data.poliza}&certificado=${data.certificado}&ramo=${data.id}`,
+          {
+            headers: { Authorization: `Token ${info.token}` },
+          }
+        )
+        .then((res) => {
+          setIsLoading(false);
+          if (res.status === 200) {
+            const patientWithInfo = {
+              patient,
+              ...res.data,
+            };
+            storeInfo({ patientWithInfo });
+            setActiveStep(2);
+          }
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          if (error?.response?.status === 404) {
+            storeInfo({ patient });
+            handleNext();
+          }
+        });
+    } catch (error) {
+      throw console.error(error);
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Controller
-        rules={{ required: "Este campo es requerido." }}
-        control={control}
-        name="poliza"
-        defaultValue=""
-        render={({ field }) => (
-          <TextField
-            margin="normal"
-            label="Número de póliza*"
-            autoFocus
-            size="small"
-            {...field}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={1}>
+        <Box>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="poliza"
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                type="number"
+                inputProps={{ min: 0, step: 1 }}
+                margin="normal"
+                label="Número de póliza *"
+                autoFocus
+                size="small"
+                error={!!error}
+                helperText={error?.message}
+                {...field}
+              />
+            )}
           />
-        )}
-      />
-      {errors?.poliza?.message && (
-        <Typography variant="body2" color="red">
-          {errors.poliza.message}
-        </Typography>
-      )}
-      <Controller
-        rules={{ required: "Este campo es requerido." }}
-        control={control}
-        name="certificado"
-        defaultValue=""
-        render={({ field }) => (
-          <TextField
-            margin="normal"
-            label="Certificado*"
-            size="small"
-            {...field}
+        </Box>
+        <Box>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="certificado"
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                type="number"
+                inputProps={{ min: 0, step: 1 }}
+                margin="normal"
+                label="Certificado *"
+                size="small"
+                error={!!error}
+                helperText={error?.message}
+                {...field}
+              />
+            )}
           />
-        )}
-      />
-      {errors?.certificado?.message && (
-        <Typography variant="body2" color="red">
-          {errors.certificado.message}
-        </Typography>
-      )}
-      <LoadingButton
-        loading={isLoading}
-        type="submit"
-        variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-        size="normal"
-      >
-        Verificar
-      </LoadingButton>
+        </Box>
+        <Box>
+          <Controller
+            rules={{ required: "Este campo es requerido." }}
+            control={control}
+            name="id"
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                select
+                label="Ramo *"
+                error={!!error}
+                helperText={error?.message}
+                sx={{ width: "20%" }}
+                {...field}
+              >
+                {branches.map((option) => (
+                  <MenuItem
+                    key={`${option.id} ${option.codigo}`}
+                    value={option.id}
+                  >
+                    {`${option.codigo} ${option.nombre}`}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+        </Box>
+        <Box>
+          <LoadingButton
+            loading={isLoading}
+            type="submit"
+            variant="contained"
+            size="normal"
+          >
+            Verificar
+          </LoadingButton>
+        </Box>
+      </Stack>
     </form>
   );
 };
