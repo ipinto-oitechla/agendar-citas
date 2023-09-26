@@ -51,7 +51,7 @@ const StepTwoForm = ({ handleNext }) => {
         certificado: info.patient.certificado,
         ramo: info.patient.ramo,
         direccion: "-",
-        medico: 1,
+        medico: process.env.REACT_APP_MEDICO,
       };
       axios
         .post(`${process.env.REACT_APP_API_URL}add_paciente`, patient, {
