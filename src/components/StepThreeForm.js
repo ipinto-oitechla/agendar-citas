@@ -187,7 +187,7 @@ const StepThreeForm = ({ handleOpen }) => {
                   size="normal"
                   ampmInClock={false}
                   ampm={false}
-                  format="hh:mm"
+                  inputFormat="HH:mm"
                   label="Hora de la cita *"
                   slotProps={{
                     textField: {
