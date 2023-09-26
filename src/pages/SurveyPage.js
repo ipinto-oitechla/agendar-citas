@@ -1,59 +1,43 @@
-import React, { useState } from "react";
-import { Box, Grid, Typography } from "@mui/material";
-import Question from "../components/Question";
-import { LoadingButton } from "@mui/lab";
-import { useForm } from "react-hook-form";
-import { questions } from "../utils/SurveyQuestions";
+import React, { useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../contexts/AppointmentProvider";
+import axios from "axios";
+import SurveyForm from "../components/SurveyForm";
 
 const SurveyPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { encuesta } = useParams();
+  const { info } = useAuth();
+  const [survey, setSurvey] = useState({});
 
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-  } = useForm({
-    defaultValues: {
-      survey: new Array(questions?.length),
-    },
-  });
-
-  const onSubmit = (data) => {
-    console.log(data);
-    setIsLoading(false);
-  };
+  useEffect(() => {
+    const getSurvey = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}buscar_encuesta/?encuesta=${encuesta}`,
+          {
+            headers: { Authorization: `Token ${info.token}` },
+          }
+        );
+        if (response.status === 200) {
+          setSurvey(response.data);
+        }
+      } catch (error) {
+        if (error.request) {
+          console.error(error);
+        }
+      }
+    };
+    getSurvey();
+  }, [encuesta, info.token]);
 
   return (
     <Box textAlign="center" mt={2} mx={6}>
-      <Typography variant="body1" mb={2}>
-        <b>Del 1 al 5 siendo 1 muy malo y 5 excelente</b>
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid
-          container
-          spacing={{ xs: 2, md: 6 }}
-          columns={{ xs: 4, sm: 8, md: 12 }}
-        >
-          {questions.map((question, index) => (
-            <Question
-              key={question.id}
-              control={control}
-              index={index}
-              {...question}
-              errors={errors}
-            />
-          ))}
-        </Grid>
-        <LoadingButton
-          loading={isLoading}
-          type="submit"
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-          size="normal"
-        >
-          Enviar
-        </LoadingButton>
-      </form>
+      {encuesta && survey?.estado === 0 ? (
+        <SurveyForm encuesta={encuesta} />
+      ) : (
+        <Typography>Esta encuesta ya fue completada.</Typography>
+      )}
     </Box>
   );
 };

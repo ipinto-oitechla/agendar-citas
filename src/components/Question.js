@@ -2,6 +2,7 @@ import React from "react";
 import {
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
   Radio,
   RadioGroup,
@@ -9,22 +10,22 @@ import {
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 
-const Question = ({ id, index, label, control, errors }) => {
+const Question = ({ pregunta, index, label, control, errors }) => {
   return (
     <>
       <Grid item xs={4} sm={8} md={6}>
         <Typography
           variant="body1"
           textAlign="left"
-        >{`${id}. ${label}`}</Typography>
+        >{`${pregunta}. ${label}`}</Typography>
       </Grid>
       <Grid item xs={4} sm={8} md={6}>
         <FormControl component="fieldset">
           <Controller
             rules={{ required: true }}
             control={control}
-            defaultValue={id}
-            name={`survey.${index}.id`}
+            defaultValue={pregunta}
+            name={`survey.${index}.pregunta`}
             render={({ field }) => <input type="hidden" {...field} />}
           />
           <Controller
@@ -35,31 +36,31 @@ const Question = ({ id, index, label, control, errors }) => {
             render={({ field }) => (
               <RadioGroup row {...field}>
                 <FormControlLabel
-                  value="1"
+                  value={1}
                   control={<Radio />}
                   label="1"
                   labelPlacement="bottom"
                 />
                 <FormControlLabel
-                  value="2"
+                  value={2}
                   control={<Radio />}
                   label="2"
                   labelPlacement="bottom"
                 />
                 <FormControlLabel
-                  value="3"
+                  value={3}
                   control={<Radio />}
                   label="3"
                   labelPlacement="bottom"
                 />
                 <FormControlLabel
-                  value="4"
+                  value={4}
                   control={<Radio />}
                   label="4"
                   labelPlacement="bottom"
                 />
                 <FormControlLabel
-                  value="5"
+                  value={5}
                   control={<Radio />}
                   label="5"
                   labelPlacement="bottom"
@@ -68,9 +69,9 @@ const Question = ({ id, index, label, control, errors }) => {
             )}
           />
           {errors?.survey?.[index] && (
-            <Typography variant="body2" color="red">
+            <FormHelperText color="red">
               Este campo es requerido.
-            </Typography>
+            </FormHelperText>
           )}
         </FormControl>
       </Grid>
