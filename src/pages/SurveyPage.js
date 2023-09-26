@@ -9,6 +9,7 @@ const SurveyPage = () => {
   const { encuesta } = useParams();
   const { info } = useAuth();
   const [survey, setSurvey] = useState({});
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const getSurvey = async () => {
@@ -24,7 +25,7 @@ const SurveyPage = () => {
         }
       } catch (error) {
         if (error.request) {
-          console.error(error);
+          setMessage(error?.response?.data?.message);
         }
       }
     };
@@ -36,7 +37,7 @@ const SurveyPage = () => {
       {encuesta && survey?.estado === 0 ? (
         <SurveyForm encuesta={encuesta} />
       ) : (
-        <Typography>Esta encuesta ya fue completada.</Typography>
+        <Typography>{message && message}</Typography>
       )}
     </Box>
   );
