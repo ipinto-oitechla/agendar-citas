@@ -74,12 +74,31 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
     }
   };
 
+  const isZeroString = (value) => {
+    // Verifica si el valor no consiste solo en ceros y permite un solo cero
+    if((/^0+$/.test(value) && value.length > 1)){
+      return "Cadena inválida.";
+    }
+    return true;
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={1}>
         <Box>
           <Controller
-            rules={{ required: "Este campo es requerido." }}
+            rules={{
+              required: "Este campo es requerido.",
+              minLength: {
+                value: 1,
+                message: "Mínimo 1 caracter",
+              },
+              maxLength: {
+                value: 14,
+                message: "Máximo 14 caracteres",
+              },
+              validate: isZeroString,
+            }}
             control={control}
             name="poliza"
             render={({ field, fieldState: { error } }) => (
@@ -99,7 +118,18 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
         </Box>
         <Box>
           <Controller
-            rules={{ required: "Este campo es requerido." }}
+            rules={{
+              required: "Este campo es requerido.",
+              minLength: {
+                value: 1,
+                message: "Mínimo 1 caracter",
+              },
+              maxLength: {
+                value: 14,
+                message: "Máximo 14 caracteres",
+              },
+              validate: isZeroString,
+            }}
             control={control}
             name="certificado"
             render={({ field, fieldState: { error } }) => (
