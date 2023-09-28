@@ -118,14 +118,13 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={4} sm={8} md={6}>
+            <Grid item xs={4} sm={8} md={6} sx={{ display: 'none' }}>
               <Controller
                 rules={{ required: "Este campo es requerido." }}
                 control={control}
                 name="modalidad"
                 render={({ field, fieldState: { error } }) => (
                   <TextField
-                    hidden={true}
                     select
                     label="Modalidad *"
                     error={!!error}
