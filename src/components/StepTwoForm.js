@@ -73,6 +73,13 @@ const StepTwoForm = ({ handleNext }) => {
     }
   };
 
+  const validatePhoneNumber = (value) => {
+    const phoneNumber = value.replace(/\D/g, ""); // Elimina todos los caracteres no numéricos
+    return phoneNumber.split("503")[1].length === 8
+      ? true
+      : "Número de teléfono inváalido."; // Verifica si el número de teléfono tiene 8 dígitos
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid
@@ -117,7 +124,10 @@ const StepTwoForm = ({ handleNext }) => {
         </Grid>
         <Grid item xs={4} sm={8} md={6}>
           <Controller
-            rules={{ required: "Este campo es requerido." }}
+            rules={{
+              required: "Este campo es requerido.",
+              validate: validatePhoneNumber,
+            }}
             control={control}
             name="telefono"
             render={({ field, fieldState: { error } }) => (

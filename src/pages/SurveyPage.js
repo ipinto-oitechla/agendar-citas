@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AppointmentProvider";
 import axios from "axios";
 import SurveyForm from "../components/SurveyForm";
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 
 const SurveyPage = () => {
   const { encuesta } = useParams();
   const { info } = useAuth();
   const [survey, setSurvey] = useState({});
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const getSurvey = async () => {
@@ -25,7 +25,7 @@ const SurveyPage = () => {
         }
       } catch (error) {
         if (error.request) {
-          setMessage(error?.response?.data?.message);
+          console.error(error?.response?.data?.message);
         }
       }
     };
@@ -37,7 +37,28 @@ const SurveyPage = () => {
       {encuesta && survey?.estado === 0 ? (
         <SurveyForm encuesta={encuesta} />
       ) : (
-        <Typography>{message && message}</Typography>
+        <Grid
+          container
+          sx={{
+            width: "50%",
+            justifyContent: "center",
+            alignItems: "center",
+            marginX: "auto",
+          }}
+        >
+          <Grid item sm>
+            <SentimentSatisfiedAltIcon
+            color="success"
+              sx={{ fontSize: { xs: "4rem", sm: "4rem", md: "8rem" } }}
+            />
+          </Grid>
+          <Grid item sm>
+            <Typography variant="subtitle1">
+              ¡Muchas gracias por tomarse el tiempo de llenar la encuesta! Ya no
+              se permiten mas respuestas por el momento.
+            </Typography>
+          </Grid>
+        </Grid>
       )}
     </Box>
   );
