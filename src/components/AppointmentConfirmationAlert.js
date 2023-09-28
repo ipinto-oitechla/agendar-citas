@@ -5,6 +5,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Typography } from "@mui/material";
 
 export default function AppointmentConfirmationAlert({ open, handleClose }) {
   return (
@@ -13,8 +15,12 @@ export default function AppointmentConfirmationAlert({ open, handleClose }) {
       onClose={handleClose}
       aria-labelledby="confirmación"
       aria-describedby="cita-agendada"
+      disableEscapeKeyDown={true}
     >
-      <DialogTitle id="confirmacion">{"Confirmación"}</DialogTitle>
+      <DialogTitle id="confirmacion" sx={{ display: "flex", alignItems: "center" }}>
+        <CheckCircleIcon color="success" fontSize="large" />
+        <Typography variant="h5" mx={1}>Confirmación</Typography>
+      </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           Su cita ha sido agendada exitosamente.
