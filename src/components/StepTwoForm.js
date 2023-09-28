@@ -18,11 +18,11 @@ import axios from "axios";
 const genders = [
   {
     value: 0,
-    label: "Femenino",
+    label: "Masculino",
   },
   {
     value: 1,
-    label: "Masculino",
+    label: "Femenino",
   },
 ];
 
