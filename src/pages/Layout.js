@@ -9,7 +9,7 @@ const Layout = () => {
   return (
     <>
       <div style={{ textAlign: "center" }}>
-        <img src={logo} alt="logo" style={{ width: "45vw" }} />
+        <img src={logo} alt="logo" style={{ maxWidth: "45vw" }} />
       </div>
       {info.token === "" ? (
         <Box textAlign="center">
