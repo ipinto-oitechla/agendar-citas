@@ -54,18 +54,14 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
         .then((res) => {
           setIsLoading(false);
           if (res.status === 200) {
-            const patientWithInfo = {
-              patient,
-              ...res.data,
-            };
-            storeInfo({ patientWithInfo });
+            storeInfo({ paciente: {...res.data} });
             setActiveStep(2);
           }
         })
         .catch((error) => {
           setIsLoading(false);
           if (error?.response?.status === 404) {
-            storeInfo({ patient });
+            storeInfo({ paciente: {...patient} });
             handleNext();
           }
         });

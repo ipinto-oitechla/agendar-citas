@@ -25,6 +25,7 @@ const genders = [
     label: "Masculino",
   },
 ];
+
 const StepTwoForm = ({ handleNext }) => {
   const { info } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -47,9 +48,9 @@ const StepTwoForm = ({ handleNext }) => {
           data.fecha_nacimiento.$M + 1
         }-${data.fecha_nacimiento.$D}`,
         telefono: data.telefono.split(" ")[1],
-        poliza: info.patient.poliza,
-        certificado: info.patient.certificado,
-        ramo: info.patient.ramo,
+        poliza: info.paciente.poliza,
+        certificado: info.paciente.certificado,
+        ramo: info.paciente.ramo,
         direccion: "-",
         medico: process.env.REACT_APP_MEDICO,
       };
@@ -145,7 +146,7 @@ const StepTwoForm = ({ handleNext }) => {
                 size="small"
                 error={!!error}
                 helperText={error?.message}
-                sx={{ minWidth: "30%" }}
+                sx={{ minWidth: "40%" }}
                 {...field}
               >
                 {genders.map((option) => (

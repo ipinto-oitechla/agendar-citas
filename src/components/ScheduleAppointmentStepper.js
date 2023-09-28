@@ -15,6 +15,7 @@ export default function ScheduleAppointmentStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
   const [open, setOpen] = useState(false);
+  const [appointmentId, setAppointmentId] = useState("");
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -35,7 +36,8 @@ export default function ScheduleAppointmentStepper() {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (event, reason) => {
+    if (reason && reason === "backdropClick") return;
     setActiveStep(0);
     setOpen(false);
   };
@@ -74,8 +76,19 @@ export default function ScheduleAppointmentStepper() {
             />
           )}
           {activeStep === 1 && <StepTwoForm handleNext={handleNext} />}
-          {activeStep === 2 && <StepThreeForm handleOpen={handleClickOpen} />}
-          <AppointmentConfirmationAlert open={open} handleClose={handleClose} />
+          {activeStep === 2 && (
+            <StepThreeForm
+              handleOpen={handleClickOpen}
+              setAppointmentId={setAppointmentId}
+            />
+          )}
+          {appointmentId && (
+            <AppointmentConfirmationAlert
+              open={open}
+              handleClose={handleClose}
+              appointmentId={appointmentId}
+            />
+          )}
         </Box>
       )}
     </Box>
