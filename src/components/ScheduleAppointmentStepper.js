@@ -37,7 +37,7 @@ export default function ScheduleAppointmentStepper() {
   };
 
   const handleClose = (event, reason) => {
-    if (reason && reason == "backdropClick") return;
+    if (reason && reason === "backdropClick") return;
     setActiveStep(0);
     setOpen(false);
   };
