@@ -40,7 +40,7 @@ const SurveyPage = () => {
         <Grid
           container
           sx={{
-            width: "50%",
+            width: { xs: "90%", sm: "90%", md: "50%" },
             justifyContent: "center",
             alignItems: "center",
             marginX: "auto",
