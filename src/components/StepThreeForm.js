@@ -22,7 +22,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       hora: "",
-      modalidad: "",
+      modalidad: "0",
     },
   });
 
@@ -125,6 +125,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
                 name="modalidad"
                 render={({ field, fieldState: { error } }) => (
                   <TextField
+                    hidden={true}
                     select
                     label="Modalidad *"
                     error={!!error}
