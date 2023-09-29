@@ -27,7 +27,7 @@ const genders = [
 ];
 
 const StepTwoForm = ({ handleNext }) => {
-  const { info } = useAuth();
+  const { info, storeInfo } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -61,6 +61,7 @@ const StepTwoForm = ({ handleNext }) => {
         .then((res) => {
           setIsLoading(false);
           if (res.status === 201) {
+            storeInfo({ paciente: {...info.paciente, id: res.data.id} });
             handleNext();
           }
         })
