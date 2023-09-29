@@ -56,7 +56,7 @@ const StepTwoForm = ({ handleNext }) => {
       };
       axios
         .post(`${process.env.REACT_APP_API_URL}add_paciente`, patient, {
-          headers: { Authorization: `Bearer ${info.token}` },
+          headers: { Authorization: `Token ${info.token}` },
         })
         .then((res) => {
           setIsLoading(false);
