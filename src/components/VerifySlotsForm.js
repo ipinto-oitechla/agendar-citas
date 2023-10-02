@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AppointmentProvider";
 import { Controller, useForm } from "react-hook-form";
 import { Grid, MenuItem, TextField } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -22,6 +22,7 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
   const [servicesList, setServicesList] = useState([]);
   const [specialtiesList, setSpecialtiesList] = useState([]);
   const watchService = watch("servicio", "");
+  const selectedService = watchService && JSON.parse(watchService);
 
   useEffect(() => {
     try {
@@ -40,26 +41,34 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
         .catch((error) => {
           console.error(error);
         });
-
-      axios
-        .get(
-          `${process.env.REACT_APP_API_URL}buscar_especialidad/?medico=${process.env.REACT_APP_MEDICO}`,
-          {
-            headers: { Authorization: `Token ${info.token}` },
-          }
-        )
-        .then((res) => {
-          if (res.status === 200) {
-            setSpecialtiesList(res.data);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
     } catch (error) {
       throw console.error(error);
     }
   }, []);
+
+  useEffect(() => {
+    try {
+      if (selectedService.id == process.env.REACT_APP_ID_CONSULTA_GENERAL) {
+        axios
+          .get(
+            `${process.env.REACT_APP_API_URL}buscar_especialidad/?medico=${process.env.REACT_APP_MEDICO}`,
+            {
+              headers: { Authorization: `Token ${info.token}` },
+            }
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              setSpecialtiesList(res.data);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    } catch (error) {
+      throw console.error(error);
+    }
+  }, [watchService]);
 
   const onVerifySlots = (data) => {
     const getSlots = async () => {
@@ -68,6 +77,7 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
         const dataToSend = {
           ...data,
           fecha: `${data.fecha.$y}-${data.fecha.$M + 1}-${data.fecha.$D}`,
+          servicio: selectedService.id,
         };
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL}verificar_disponibilidad/?fecha=${dataToSend.fecha}&especialidad=${data.especialidad}&medico=${data.medico}`,
@@ -115,7 +125,7 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
                 {servicesList.map((option) => (
                   <MenuItem
                     key={`${option.id} ${option.nombre}`}
-                    value={option.id}
+                    value={JSON.stringify(option)}
                   >
                     {option.nombre}
                   </MenuItem>
@@ -142,7 +152,7 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
             name="fecha"
             render={({ field, fieldState: { error } }) => (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
+                <DateField
                   label="Fecha de cita *"
                   format="YYYY-MM-DD"
                   size="small"
@@ -158,7 +168,7 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
             )}
           />
         </Grid>
-        {watchService === 1 && (
+        {selectedService.id == process.env.REACT_APP_ID_CONSULTA_GENERAL && (
           <Grid item xs={4} sm={8} md={6}>
             <Controller
               rules={{ required: "Este campo es requerido." }}
