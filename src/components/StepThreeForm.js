@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Grid, MenuItem, TextField, Typography } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
 import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "../contexts/AppointmentProvider";
 import VerifySlotsForm from "./VerifySlotsForm";
+import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
 
 const modalities = [
@@ -118,7 +118,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={4} sm={8} md={6} sx={{ display: 'none' }}>
+            <Grid item xs={4} sm={8} md={6} sx={{ display: "none" }}>
               <Controller
                 rules={{ required: "Este campo es requerido." }}
                 control={control}
