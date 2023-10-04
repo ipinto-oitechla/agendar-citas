@@ -68,7 +68,7 @@ export default function ScheduleAppointmentStepper() {
           </Box>
         </>
       ) : (
-        <Box mt={4} mx={6}>
+        <Box mt={2} mb={4} mx={6}>
           {activeStep === 0 && (
             <StepOneForm
               setActiveStep={setActiveStep}
