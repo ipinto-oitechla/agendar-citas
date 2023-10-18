@@ -7,6 +7,9 @@ import { Typography } from "@mui/material";
 const ScheduleAppointmentPage = lazy(() =>
   import("./pages/ScheduleAppointmentPage")
 );
+const VirtualAppointmentPage = lazy(() =>
+  import("./pages/VirtualAppointmentPage")
+);
 const SurveyPage = lazy(() => import("./pages/SurveyPage"));
 
 function App() {
@@ -39,6 +42,7 @@ function App() {
       <Route path="" element={<Layout />}>
         <Route index element={<ScheduleAppointmentPage />} />
         <Route path="encuesta/:encuesta" element={<SurveyPage />} />
+        <Route path="consulta/:token" element={<VirtualAppointmentPage />} />
       </Route>
       <Route
         path="*"
