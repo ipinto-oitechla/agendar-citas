@@ -27,22 +27,25 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
   });
 
   useEffect(() => {
-    try {
-      axios
-        .get(`${process.env.REACT_APP_API_URL}buscar_ramo/`, {
-          headers: { Authorization: `Token ${info.token}` },
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            setBranches(res.data);
+    const getRamos = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}buscar_ramo/`,
+          {
+            headers: {
+              Authorization: `Token ${info.token}`,
+            },
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      throw console.error(error);
-    }
+        );
+        if (response.status === 200) {
+          console.log("RAMOS ", response.data);
+          setBranches(response.data);
+        }
+      } catch (error) {
+        throw console.error(error);
+      }
+    };
+    getRamos();
   }, []);
 
   const onSubmit = (data) => {
@@ -165,14 +168,14 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
                 sx={{ minWidth: "20%" }}
                 {...field}
               >
-                {branches.map((option) => (
-                  <MenuItem
-                    key={`${option.id} ${option.codigo}`}
-                    value={option.id}
-                  >
-                    {`${option.codigo} ${option.nombre}`}
-                  </MenuItem>
-                ))}
+                {branches?.map((option) => (
+                    <MenuItem
+                      key={`${option.id} ${option.codigo}`}
+                      value={option.id}
+                    >
+                      {`${option.codigo} ${option.nombre}`}
+                    </MenuItem>
+                  ))}
               </TextField>
             )}
           />
