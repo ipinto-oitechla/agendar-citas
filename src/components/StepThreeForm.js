@@ -45,6 +45,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
           modalidad: data.modalidad,
           medico_id: appointmentData.medico,
           especialidad_id: appointmentData.especialidad,
+          notes: data.notes,
         };
         const response = await axios.post(
           `${process.env.REACT_APP_API_URL}add_event`,
@@ -92,6 +93,24 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
             spacing={{ xs: 4, md: 4 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
+            <Grid item xs={4} sm={8} md={6}>
+              <Controller
+                rules={{ required: "Este campo es requerido." }}
+                control={control}
+                name="notes"
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    margin="normal"
+                    label="Nombre del paciente *"
+                    autoFocus
+                    size="small"
+                    error={!!error}
+                    helperText={error?.message}
+                    {...field}
+                  />
+                )}
+              />
+            </Grid>
             <Grid item xs={4} sm={8} md={6}>
               <Controller
                 rules={{ required: "Este campo es requerido." }}
