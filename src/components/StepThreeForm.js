@@ -102,6 +102,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
                   <TextField
                     margin="normal"
                     label="Nombre del paciente *"
+                    autoFocus
                     size="small"
                     error={!!error}
                     helperText={error?.message}
