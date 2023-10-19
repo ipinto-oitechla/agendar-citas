@@ -60,7 +60,7 @@ const SurveyForm = ({ encuesta }) => {
           spacing={{ xs: 2, md: 6 }}
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          {questions.map((question, index) => (
+          {questions?.map((question, index) => (
             <Question
               key={question.pregunta}
               control={control}

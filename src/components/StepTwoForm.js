@@ -1,19 +1,24 @@
 import React, { useState } from "react";
+import { useAuth } from "../contexts/AppointmentProvider";
 import { Controller, useForm } from "react-hook-form";
+import axios from "axios";
 import {
   FormControl,
   FormHelperText,
   Grid,
+  IconButton,
   MenuItem,
   TextField,
 } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LoadingButton from "@mui/lab/LoadingButton";
+import PersonIcon from "@mui/icons-material/Person";
+import WcIcon from '@mui/icons-material/Wc';
+import EmailIcon from '@mui/icons-material/Email';
 import MuiPhoneNumber from "mui-phone-number";
-import { useAuth } from "../contexts/AppointmentProvider";
-import axios from "axios";
 
 const genders = [
   {
@@ -61,7 +66,7 @@ const StepTwoForm = ({ handleNext }) => {
         .then((res) => {
           setIsLoading(false);
           if (res.status === 201) {
-            storeInfo({ paciente: {...info.paciente, id: res.data.id} });
+            storeInfo({ paciente: { ...info.paciente, id: res.data.id } });
             handleNext();
           }
         })
@@ -101,6 +106,14 @@ const StepTwoForm = ({ handleNext }) => {
                 size="small"
                 error={!!error}
                 helperText={error?.message}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon />{" "}
+  
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               />
             )}
@@ -118,6 +131,13 @@ const StepTwoForm = ({ handleNext }) => {
                 size="small"
                 error={!!error}
                 helperText={error?.message}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon />{" "}
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               />
             )}
@@ -158,9 +178,18 @@ const StepTwoForm = ({ handleNext }) => {
                 error={!!error}
                 helperText={error?.message}
                 sx={{ minWidth: "40%" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton>
+                        <WcIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               >
-                {genders.map((option) => (
+                {genders?.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
@@ -218,10 +247,17 @@ const StepTwoForm = ({ handleNext }) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 margin="normal"
-                label="Correo electrónico*"
+                label="Correo electrónico *"
                 size="small"
                 error={!!error}
                 helperText={error?.message}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailIcon />
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               />
             )}

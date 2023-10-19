@@ -45,7 +45,7 @@ export default function ScheduleAppointmentStepper() {
   return (
     <Box sx={{ width: "100%" }}>
       <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label, index) => {
+        {steps?.map((label, index) => {
           const stepProps = {};
           const labelProps = {};
           if (isStepSkipped(index)) {
@@ -68,7 +68,7 @@ export default function ScheduleAppointmentStepper() {
           </Box>
         </>
       ) : (
-        <Box mt={4} mx={6}>
+        <Box mt={2} mb={4} mx={6}>
           {activeStep === 0 && (
             <StepOneForm
               setActiveStep={setActiveStep}

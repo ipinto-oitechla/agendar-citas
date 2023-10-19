@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { Grid, MenuItem, TextField, Typography } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "../contexts/AppointmentProvider";
+import axios from "axios";
+import { Button, Grid, IconButton, MenuItem, TextField, Typography } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
+import EditCalendarIcon from "@mui/icons-material/EditCalendar";
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import { Controller, useForm } from "react-hook-form";
 import VerifySlotsForm from "./VerifySlotsForm";
 import LoadingButton from "@mui/lab/LoadingButton";
-import axios from "axios";
 
 const modalities = [
   {
@@ -29,6 +34,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
   const [appointmentData, setAppointmentData] = useState();
   const [slots, setSlots] = useState([]);
   const [message, setMessage] = useState([]);
+  const [isChangeDate, setIsChangeDate] = useState(false);
 
   const onSubmit = (data) => {
     const addEvent = async () => {
@@ -45,6 +51,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
           modalidad: data.modalidad,
           medico_id: appointmentData.medico,
           especialidad_id: appointmentData.especialidad,
+          notes: data.notes,
         };
         const response = await axios.post(
           `${process.env.REACT_APP_API_URL}add_event`,
@@ -71,12 +78,13 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
 
   return (
     <>
-      {message !== "" ? (
+      {message !== "" || isChangeDate === true ? (
         <>
           <VerifySlotsForm
             setAppointmentData={setAppointmentData}
             setSlots={setSlots}
             setMessage={setMessage}
+            setIsChangeDate={setIsChangeDate}
           />
           <Typography variant="body2" color="red">
             {message}
@@ -87,11 +95,45 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
           <Typography variant="body1">
             Dia seleccionado: <b>{appointmentData.fecha}</b>
           </Typography>
+          <Button
+            variant="outlined"
+            sx={{ mt: 3, mx: 2 }}
+            size="normal"
+            startIcon={<EditCalendarIcon />}
+            onClick={() => setIsChangeDate(true)}
+          >
+            Cambiar fecha
+          </Button>
           <Grid
             container
             spacing={{ xs: 4, md: 4 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
+            <Grid item xs={4} sm={8} md={6}>
+              <Controller
+                rules={{ required: "Este campo es requerido." }}
+                control={control}
+                name="notes"
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    margin="normal"
+                    label="Nombre del paciente *"
+                    autoFocus
+                    size="small"
+                    error={!!error}
+                    helperText={error?.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    }}
+                    {...field}
+                  />
+                )}
+              />
+            </Grid>
             <Grid item xs={4} sm={8} md={6}>
               <Controller
                 rules={{ required: "Este campo es requerido." }}
@@ -104,9 +146,18 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
                     error={!!error}
                     helperText={error?.message}
                     sx={{ minWidth: "30%", maxWidth: "50%" }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconButton>
+                            <ScheduleIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                     {...field}
                   >
-                    {slots.map((option) => (
+                    {slots?.map((option) => (
                       <MenuItem
                         key={option.start_time}
                         value={`${option.start_time}-${option.end_time}`}
@@ -148,6 +199,7 @@ const StepThreeForm = ({ handleOpen, setAppointmentId }) => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
             size="normal"
+            startIcon={<EventAvailableIcon />}
           >
             Agendar
           </LoadingButton>
