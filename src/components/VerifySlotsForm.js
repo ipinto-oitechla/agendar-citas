@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AppointmentProvider";
+import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
-import { Grid, MenuItem, TextField } from "@mui/material";
+import { Grid, IconButton, MenuItem, TextField } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
 import { LoadingButton } from "@mui/lab";
-import axios from "axios";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 
-const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
+const VerifySlotsForm = ({
+  setAppointmentData,
+  setSlots,
+  setMessage,
+  setIsChangeDate,
+}) => {
   const { info } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { control, watch, handleSubmit } = useForm({
@@ -73,6 +80,7 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
   const onVerifySlots = (data) => {
     const getSlots = async () => {
       try {
+        setIsChangeDate(false);
         setIsLoading(true);
         const dataToSend = {
           ...data,
@@ -120,9 +128,18 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
                 error={!!error}
                 helperText={error?.message}
                 sx={{ minWidth: "30%" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton>
+                        <MedicalServicesIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               >
-                {servicesList.map((option) => (
+                {servicesList?.map((option) => (
                   <MenuItem
                     key={`${option.id} ${option.nombre}`}
                     value={JSON.stringify(option)}
@@ -168,7 +185,8 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
             )}
           />
         </Grid>
-        {selectedService.id == process.env.REACT_APP_ID_CONSULTA_GENERAL && (
+        {selectedService.id ===
+          parseInt(process.env.REACT_APP_ID_CONSULTA_GENERAL) && (
           <Grid item xs={4} sm={8} md={6}>
             <Controller
               rules={{ required: "Este campo es requerido." }}
@@ -181,6 +199,15 @@ const VerifySlotsForm = ({ setAppointmentData, setSlots, setMessage }) => {
                   error={!!error}
                   helperText={error?.message}
                   sx={{ minWidth: "30%" }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton>
+                          <MedicalServicesIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   {...field}
                 >
                   {specialtiesList.map((option) => (

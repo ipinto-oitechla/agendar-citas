@@ -45,7 +45,7 @@ export default function ScheduleAppointmentStepper() {
   return (
     <Box sx={{ width: "100%" }}>
       <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label, index) => {
+        {steps?.map((label, index) => {
           const stepProps = {};
           const labelProps = {};
           if (isStepSkipped(index)) {

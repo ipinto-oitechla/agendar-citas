@@ -1,17 +1,20 @@
-import { Controller, useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AppointmentProvider";
+import { Controller, useForm } from "react-hook-form";
+import axios from "axios";
 import {
   Box,
   FormControl,
   FormHelperText,
+  IconButton,
   MenuItem,
   Stack,
   TextField,
 } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useAuth } from "../contexts/AppointmentProvider";
+import BadgeIcon from '@mui/icons-material/Badge';
 import ReCAPTCHA from "react-google-recaptcha";
-import axios from "axios";
 
 const StepOneForm = ({ setActiveStep, handleNext }) => {
   const { info, storeInfo } = useAuth();
@@ -119,6 +122,13 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
                 size="small"
                 error={!!error}
                 helperText={error?.message}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <BadgeIcon />
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               />
             )}
@@ -149,6 +159,13 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
                 size="small"
                 error={!!error}
                 helperText={error?.message}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <BadgeIcon />
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               />
             )}
@@ -166,6 +183,15 @@ const StepOneForm = ({ setActiveStep, handleNext }) => {
                 error={!!error}
                 helperText={error?.message}
                 sx={{ minWidth: "20%" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton>
+                        <BadgeIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 {...field}
               >
                 {branches?.map((option) => (
