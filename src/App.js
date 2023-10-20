@@ -39,11 +39,11 @@ function App() {
 
   return (
     <Routes>
-      <Route path="" element={<Layout />}>
+      <Route exact path="" element={<Layout />}>
         <Route index element={<ScheduleAppointmentPage />} />
         <Route path="encuesta/:encuesta" element={<SurveyPage />} />
-        <Route path="consulta/:token" element={<VirtualAppointmentPage />} />
       </Route>
+      <Route exact path="/videollamada/:token" element={<VirtualAppointmentPage />} />
       <Route
         path="*"
         element={<Typography>404 Página no encontrada</Typography>}
