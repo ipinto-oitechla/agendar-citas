@@ -55,7 +55,7 @@ const SurveyPage = () => {
           <Grid item sm>
             <Typography variant="subtitle1">
               ¡Muchas gracias por tomarse el tiempo de llenar la encuesta! Ya no
-              se permiten mas respuestas por el momento.
+              se permiten más respuestas por el momento.
             </Typography>
           </Grid>
         </Grid>
