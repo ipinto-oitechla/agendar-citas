@@ -106,7 +106,7 @@ const Videocall = () => {
           </Grid>
           <Grid item sm>
             <Typography variant="subtitle1">
-              Lo sentimos, el enlace ya no es válido.
+              Lo sentimos, el enlace no es válido en estos momentos.
             </Typography>
           </Grid>
         </Grid>
